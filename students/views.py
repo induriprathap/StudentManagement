@@ -3,6 +3,7 @@ from django.core.paginator import Paginator
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth import login
+from django.contrib.auth.models import Permission
 
 from .models import Student
 from .forms import StudentForm, RegisterForm
@@ -132,14 +133,17 @@ def delete_student(request, id):
 
 
 def register(request):
-
     if request.method == "POST":
-
         form = RegisterForm(request.POST)
 
         if form.is_valid():
-
             user = form.save()
+
+            # Give the new user permission to view students
+            permission = Permission.objects.get(
+                codename="view_student"
+            )
+            user.user_permissions.add(permission)
 
             login(request, user)
 
@@ -151,13 +155,10 @@ def register(request):
             return redirect("student_list")
 
     else:
-
         form = RegisterForm()
 
     return render(
         request,
         "students/register.html",
-        {
-            "form": form
-        }
+        {"form": form}
     )
