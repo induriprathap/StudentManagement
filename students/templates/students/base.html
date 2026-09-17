@@ -1,0 +1,170 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+
+    <title>
+        {% block title %}
+        Student Management System
+        {% endblock %}
+    </title>
+
+    <link rel="stylesheet"
+          href="{% static 'students/style.css' %}">
+
+</head>
+
+
+<body class="bg-gray-50 min-h-screen">
+
+
+    <!-- Navigation Bar -->
+
+    <nav class="bg-white border-b border-gray-200">
+
+        <div class="max-w-6xl mx-auto px-4 py-4
+                    flex items-center justify-between">
+
+
+            <!-- Logo -->
+
+            <a href="{% url 'student_list' %}"
+               class="text-xl font-bold text-blue-600">
+
+                StudentMS
+
+            </a>
+
+
+            <!-- Navigation Links -->
+
+            <div class="flex items-center gap-3">
+
+                {% if user.is_authenticated %}
+
+                    <span class="text-gray-600 hidden sm:block">
+
+                        Welcome, {{ user.username }}
+
+                    </span>
+
+
+                    <!-- Logout -->
+
+                    <form method="POST"
+                          action="{% url 'logout' %}"
+                          class="!m-0 !p-0 !max-w-none !bg-transparent">
+
+                        {% csrf_token %}
+
+                        <button type="submit"
+                                class="bg-gray-800
+                                       text-white
+                                       px-4 py-2
+                                       rounded-lg
+                                       hover:bg-gray-900
+                                       transition">
+
+                            Logout
+
+                        </button>
+
+                    </form>
+
+
+                {% else %}
+
+
+                    <!-- Login -->
+
+                    <a href="{% url 'login' %}"
+                       class="text-gray-600
+                              px-4 py-2
+                              rounded-lg
+                              hover:bg-gray-100
+                              transition">
+
+                        Login
+
+                    </a>
+
+
+                    <!-- Register -->
+
+                    <a href="{% url 'register' %}"
+                       class="bg-blue-600
+                              text-white
+                              px-4 py-2
+                              rounded-lg
+                              hover:bg-blue-700
+                              transition">
+
+                        Register
+
+                    </a>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+    </nav>
+
+
+
+    <!-- Django Messages -->
+
+    {% if messages %}
+
+        <div class="max-w-6xl mx-auto px-4 pt-5">
+
+            {% for message in messages %}
+
+                <div class="bg-green-50
+                            border border-green-200
+                            text-green-700
+                            px-4 py-3
+                            rounded-lg
+                            flex items-center
+                            gap-3
+                            shadow-sm">
+
+                    <span class="text-xl font-bold">
+                        ✓
+                    </span>
+
+                    <span>
+                        {{ message }}
+                    </span>
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    {% endif %}
+
+
+
+    <!-- Page Content -->
+
+    {% block content %}
+
+    {% endblock %}
+
+
+</body>
+
+</html>

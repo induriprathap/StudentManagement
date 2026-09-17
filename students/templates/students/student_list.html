@@ -1,0 +1,307 @@
+{% extends "students/base.html" %}
+
+{% block title %}
+Student Management System
+{% endblock %}
+
+{% block content %}
+
+<div class="max-w-5xl mx-auto px-4 py-10">
+
+    <!-- Header -->
+
+    <div class="flex flex-col sm:flex-row
+                sm:items-center sm:justify-between
+                gap-5 mb-8">
+
+        <div>
+
+            <h1 class="text-3xl font-bold text-gray-800">
+                Student Management System
+            </h1>
+
+            <p class="text-gray-500 mt-2">
+                Manage your students easily
+            </p>
+
+        </div>
+
+        <!-- Add Student -->
+
+        {% if perms.students.add_student %}
+
+            <a href="{% url 'add_student' %}"
+               class="bg-blue-600
+                      text-white
+                      px-5 py-3
+                      rounded-lg
+                      hover:bg-blue-700
+                      transition
+                      text-center">
+
+                + Add Student
+
+            </a>
+
+        {% endif %}
+
+    </div>
+
+
+    <!-- Search -->
+
+    <form method="GET"
+          class="!max-w-none
+                 !mx-0
+                 !my-0
+                 !bg-white
+                 !p-5
+                 rounded-xl
+                 shadow-sm
+                 border border-gray-100
+                 mb-8">
+
+        <div class="flex flex-col sm:flex-row gap-3">
+
+            <input type="text"
+                   name="search"
+                   placeholder="Search student by name..."
+                   value="{{ request.GET.search }}"
+                   class="flex-1
+                          border border-gray-300
+                          rounded-lg
+                          px-4 py-3
+                          focus:outline-none
+                          focus:ring-2
+                          focus:ring-blue-500">
+
+            <button type="submit"
+                    class="bg-gray-800
+                           text-white
+                           px-6 py-3
+                           rounded-lg
+                           hover:bg-gray-900
+                           transition">
+
+                Search
+
+            </button>
+
+        </div>
+
+    </form>
+
+
+    <!-- Student Cards -->
+
+    <div class="grid gap-5">
+
+        {% for student in students %}
+
+            <div class="bg-white
+                        rounded-xl
+                        shadow-sm
+                        border border-gray-100
+                        p-6
+                        hover:shadow-md
+                        transition">
+
+                <div class="flex flex-col
+                            sm:flex-row
+                            sm:items-center
+                            sm:justify-between
+                            gap-5">
+
+                    <!-- Student Information -->
+
+                    <div>
+
+                        <h2 class="text-xl
+                                   font-semibold
+                                   text-gray-800">
+
+                            {{ student.name }}
+
+                        </h2>
+
+                        <div class="mt-3
+                                    space-y-1
+                                    text-gray-600">
+
+                            <p>
+                                <strong>Age:</strong>
+                                {{ student.age }}
+                            </p>
+
+                            <p>
+                                <strong>Email:</strong>
+                                {{ student.email }}
+                            </p>
+
+                            <p>
+                                <strong>Course:</strong>
+                                {{ student.course.name }}
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Action Buttons -->
+
+                    <div class="flex flex-wrap gap-2">
+
+                        <!-- Edit -->
+
+                        {% if perms.students.change_student %}
+
+                            <a href="{% url 'edit_student' student.id %}"
+                               class="bg-blue-100
+                                      text-blue-700
+                                      px-4 py-2
+                                      rounded-lg
+                                      hover:bg-blue-200
+                                      transition">
+
+                                Edit
+
+                            </a>
+
+                        {% endif %}
+
+
+                        <!-- Delete -->
+
+                        {% if perms.students.delete_student %}
+
+                            <a href="{% url 'delete_student' student.id %}"
+                               onclick="return confirmDelete('{{ student.name }}');"
+                               class="bg-red-100
+                                      text-red-700
+                                      px-4 py-2
+                                      rounded-lg
+                                      hover:bg-red-200
+                                      transition">
+
+                                Delete
+
+                            </a>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        {% empty %}
+
+            <!-- No Students -->
+
+            <div class="bg-white
+                        rounded-xl
+                        p-8
+                        text-center
+                        text-gray-500
+                        shadow-sm">
+
+                No students found.
+
+            </div>
+
+        {% endfor %}
+
+    </div>
+
+
+    <!-- Pagination -->
+
+    {% if page_obj.has_other_pages %}
+
+        <div class="flex items-center
+                    justify-center
+                    gap-2
+                    mt-8">
+
+
+            <!-- Previous -->
+
+            {% if page_obj.has_previous %}
+
+                <a href="?page={{ page_obj.previous_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}"
+                   class="px-4 py-2
+                          bg-gray-200
+                          text-gray-700
+                          rounded-lg
+                          hover:bg-gray-300
+                          transition">
+
+                    ← Previous
+
+                </a>
+
+            {% endif %}
+
+
+            <!-- Page Numbers -->
+
+            {% for num in page_obj.paginator.page_range %}
+
+                {% if page_obj.number == num %}
+
+                    <span class="px-4 py-2
+                                 bg-blue-600
+                                 text-white
+                                 rounded-lg">
+
+                        {{ num }}
+
+                    </span>
+
+                {% else %}
+
+                    <a href="?page={{ num }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}"
+                       class="px-4 py-2
+                              bg-gray-200
+                              text-gray-700
+                              rounded-lg
+                              hover:bg-gray-300
+                              transition">
+
+                        {{ num }}
+
+                    </a>
+
+                {% endif %}
+
+            {% endfor %}
+
+
+            <!-- Next -->
+
+            {% if page_obj.has_next %}
+
+                <a href="?page={{ page_obj.next_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}"
+                   class="px-4 py-2
+                          bg-gray-200
+                          text-gray-700
+                          rounded-lg
+                          hover:bg-gray-300
+                          transition">
+
+                    Next →
+
+                </a>
+
+            {% endif %}
+
+        </div>
+
+    {% endif %}
+
+
+</div>
+
+{% endblock %}

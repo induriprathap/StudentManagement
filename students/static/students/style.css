@@ -1,0 +1,33 @@
+/* Student Management System */
+/* Tailwind CSS handles the main styling. */
+
+
+/* Django form error messages */
+
+.errorlist {
+    list-style: none;
+    padding: 0;
+    margin: 5px 0 10px;
+}
+
+.errorlist li {
+    color: #dc2626;
+    font-size: 14px;
+}
+
+
+/* Form help text */
+
+.helptext {
+    display: block;
+    color: #6b7280;
+    font-size: 13px;
+    margin-top: 4px;
+}
+
+
+/* Required field indicator */
+
+.required {
+    font-weight: 500;
+}
