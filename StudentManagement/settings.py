@@ -27,7 +27,9 @@ SECRET_KEY = os.environ.get("SECRET_KEY")
 DEBUG = False
 
 ALLOWED_HOSTS = ["*"]
-
+CSRF_TRUSTED_ORIGINS = [
+    "https://studentmanagement-3hy0.onrender.com",
+]
 
 # Application definition
 
