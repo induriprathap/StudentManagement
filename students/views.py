@@ -22,7 +22,6 @@ def student_list(request):
     else:
         students = Student.objects.all()
 
-    # Pagination
     paginator = Paginator(students, 10)
 
     page_number = request.GET.get("page")
@@ -65,9 +64,7 @@ def add_student(request):
     return render(
         request,
         "students/student_form.html",
-        {
-            "form": form
-        }
+        {"form": form}
     )
 
 
@@ -107,9 +104,7 @@ def edit_student(request, id):
     return render(
         request,
         "students/student_edit.html",
-        {
-            "form": form
-        }
+        {"form": form}
     )
 
 
@@ -133,18 +128,28 @@ def delete_student(request, id):
 
 
 def register(request):
+
     if request.method == "POST":
+
         form = RegisterForm(request.POST)
 
         if form.is_valid():
+
             user = form.save()
 
-            # Give the new user permission to view students
-            permission = Permission.objects.get(
-                codename="view_student"
+            # Give the new user all Student permissions
+            permissions = Permission.objects.filter(
+                codename__in=[
+                    "view_student",
+                    "add_student",
+                    "change_student",
+                    "delete_student"
+                ]
             )
-            user.user_permissions.add(permission)
 
+            user.user_permissions.add(*permissions)
+
+            # Log the user in automatically
             login(request, user)
 
             messages.success(
@@ -155,6 +160,7 @@ def register(request):
             return redirect("student_list")
 
     else:
+
         form = RegisterForm()
 
     return render(
